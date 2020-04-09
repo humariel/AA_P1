@@ -1,4 +1,4 @@
-<h1>AA Project1
+<h1>AA Project1 </h1>
 
 How to set up:
 
