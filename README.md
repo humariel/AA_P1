@@ -23,3 +23,4 @@ How to set up:
 	1. The NN.py script trains a model with the best parameters found from a small amount of possibilities.
 	2. The NN_testing.py shows the trained model making predictions.
 	3. The NN_analysis.py can (depending on input, run it with -h for help)
+5. Similar steps as in 4 for the Logistic Regression and the SVM

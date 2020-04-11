@@ -68,6 +68,8 @@ def plot_data():
     std_acc =  list(zip(params, results['std_test_acc']))
     ranking_acc = results['rank_test_acc']
 
+    loss = list(zip(params, results['mean_test_loss']))
+
     mean_f1_alpha_1 = [x for x in mean_f1 if x[0]['alpha'] == 0.0001]
     mean_f1_alpha_2 = [x for x in mean_f1 if x[0]['alpha'] == 0.003]
     mean_f1_alpha_3 = [x for x in mean_f1 if x[0]['alpha'] == 0.001]
@@ -76,26 +78,30 @@ def plot_data():
     mean_acc_alpha_2 = [x for x in mean_acc if x[0]['alpha'] == 0.003]
     mean_acc_alpha_3 = [x for x in mean_acc if x[0]['alpha'] == 0.001]
 
-    create_barh(mean_f1_alpha_1, mean_acc_alpha_1)
-    create_barh(mean_f1_alpha_2, mean_acc_alpha_2)
-    create_barh(mean_f1_alpha_3, mean_acc_alpha_3)
+    loss_1 = [x for x in loss if x[0]['alpha'] == 0.0001]
+
+    create_graph(mean_f1_alpha_1, mean_acc_alpha_1, loss_1)
+    create_graph(mean_f1_alpha_2, mean_acc_alpha_2, loss_1)
+    create_graph(mean_f1_alpha_3, mean_acc_alpha_3, loss_1)
 
 
-def create_barh(dict_f1, dict_acc):
-    #f1 bar
-    plt.barh([x-0.2 for x in range(0,len(dict_f1))], [x[1] for x in dict_f1], 
-                    tick_label=['learn_rate={}&{}'.format(x[0]['learning_rate_init'],x[0]['solver']) for x in dict_f1], color='b', height=0.2)
-    for i,v in enumerate([x[1] for x in dict_f1]):
-        plt.text(v,i, " "+str('{:.4f}'.format(v)), va='bottom')
-    #acc bar
-    plt.barh(range(0,len(dict_acc)), [x[1] for x in dict_acc], 
-                    tick_label=['learn_rate={}&{}'.format(x[0]['learning_rate_init'],x[0]['solver']) for x in dict_acc], color='r', height=0.2)
-    for i,v in enumerate([x[1] for x in dict_acc]):
-        plt.text(v,i, " "+str('{:.4f}'.format(v)), va='top')
+def create_graph(dict_f1, dict_acc, dict_loss):
+    width = 0.2
+
+    create_barh(dict_f1, offset=-width, text_offset=-width, color='b', label='f1_score', va='center')
+    create_barh(dict_acc, text_offset=-width/2.0, color='r', label='accuracy', va='bottom')
+    create_barh(dict_loss, offset=width, text_offset=width/2.0, color='g', label='log_loss', va='bottom')
 
     plt.title('With alpha={}'.format(dict_f1[0][0]['alpha']))
-
+    plt.legend()
     plt.show()
+
+
+def create_barh(dict_, color, label, text_offset, offset=0, va='center'):
+    plt.barh([x+offset for x in range(0,len(dict_))], [abs(x[1]) for x in dict_], 
+                    tick_label=['learn_rate={}&{}'.format(x[0]['learning_rate_init'],x[0]['solver']) for x in dict_], color=color, height=0.2, label=label)
+    for i,v in enumerate([x[1] for x in dict_]):
+        plt.text(abs(v),i+text_offset, " "+str('{:.4f}'.format(abs(v))), va=va)
 
 
 def plot_convergence_curves():
@@ -111,15 +117,11 @@ def plot_convergence_curves():
     #collect the data set
     print('Collecting Xtrain')
     Xtrain = np.load(DATASET_DIR + '/Xtrain.npy')
-    print('Collecting Xval')
-    Xval = np.load(DATASET_DIR + '/Xval.npy')
     print('Collecting Xtest')
     Xtest = np.load(DATASET_DIR + '/Xtest.npy')
 
     print('Collecting ytrain')
     ytrain = np.load(DATASET_DIR + '/ytrain.npy')
-    print('Collecting yval')
-    yval = np.load(DATASET_DIR + '/yval.npy')
     print('Collecting yval')
     ytest = np.load(DATASET_DIR + '/ytest.npy')
 
@@ -153,6 +155,9 @@ def main(args):
     elif args.option[0] == 2:
         print('Calculating and Plotting convergence curves')
         plot_convergence_curves()
+    else:
+        print('Invalid value for --options.')
+
 
 
 if __name__ == "__main__":

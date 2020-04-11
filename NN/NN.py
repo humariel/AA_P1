@@ -13,15 +13,11 @@ def main():
     #collect the data set
     print('Collecting Xtrain')
     Xtrain = np.load(DATASET_DIR + '/Xtrain.npy')
-    print('Collecting Xval')
-    Xval = np.load(DATASET_DIR + '/Xval.npy')
     print('Collecting Xtest')
     Xtest = np.load(DATASET_DIR + '/Xtest.npy')
 
     print('Collecting ytrain')
     ytrain = np.load(DATASET_DIR + '/ytrain.npy')
-    print('Collecting yval')
-    yval = np.load(DATASET_DIR + '/yval.npy')
     print('Collecting yval')
     ytest = np.load(DATASET_DIR + '/ytest.npy')
 
