@@ -30,7 +30,7 @@ def main():
 
     #create the classifier and fit to the data
     print('Creating the model...')
-    clf = SVC(C=0.001, gamma=0.003, verbose=True, kernel='linear')
+    clf = SVC(C=0.01, verbose=True, kernel='linear')
     clf.fit(Xtrain, ytrain)
     print('Done')
     result = clf.score(Xtest, ytest)

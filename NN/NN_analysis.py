@@ -24,14 +24,17 @@ def run_optimizer():
     print('Collecting yval')
     ytest = np.load(DATASET_DIR + '/ytest.npy')
 
-    k = 43          #number of classes
+    #use only 10% of data
+    Xtrain = Xtrain[0:int(len(Xtrain)/10)]
+    ytrain = ytrain[0:int(len(ytrain)/10)]
+
+    Xtest = Xtest[0:int(len(Xtest)/10)]
+    ytest = ytest[0:int(len(ytest)/10)]
 
     params = {
-        'hidden_layer_sizes' : [(100,k)],
-        'activation' : ['relu'],
-        'solver' : ['sgd', 'adam'],
-        'alpha' : [0.0001, 0.003, 0.001],
-        'learning_rate_init' : [0.001, 0.03, 0.01]
+        'hidden_layer_sizes' : [(10)],
+        'alpha' : [0, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3],
+        'learning_rate_init' : [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
     }
 
     scores = {
@@ -40,7 +43,8 @@ def run_optimizer():
         'acc': 'accuracy'
     }
 
-    model = MLPClassifier(max_iter=200)
+    #model = MLPClassifier(max_iter=200)
+    model = MLPClassifier(solver='sgd',activation='logistic', max_iter=5000, momentum=0.9, nesterovs_momentum=True)
 
     optimizer = GridSearchCV(estimator=model, param_grid=params ,cv=3, verbose=10, scoring=scores, refit='acc')
     print('Fitting optimizer...')
@@ -70,19 +74,25 @@ def plot_data():
 
     loss = list(zip(params, results['mean_test_loss']))
 
-    mean_f1_alpha_1 = [x for x in mean_f1 if x[0]['alpha'] == 0.0001]
-    mean_f1_alpha_2 = [x for x in mean_f1 if x[0]['alpha'] == 0.003]
-    mean_f1_alpha_3 = [x for x in mean_f1 if x[0]['alpha'] == 0.001]
+    mean_f1_1 = [x for x in mean_f1 if x[0]['learning_rate_init'] == 0.001]
+    mean_f1_2 = [x for x in mean_f1 if x[0]['learning_rate_init'] == 0.003]
+    mean_f1_3 = [x for x in mean_f1 if x[0]['learning_rate_init'] == 0.01]
+    mean_f1_4 = [x for x in mean_f1 if x[0]['learning_rate_init'] == 0.03]
 
-    mean_acc_alpha_1 = [x for x in mean_acc if x[0]['alpha'] == 0.0001]
-    mean_acc_alpha_2 = [x for x in mean_acc if x[0]['alpha'] == 0.003]
-    mean_acc_alpha_3 = [x for x in mean_acc if x[0]['alpha'] == 0.001]
+    mean_acc_1 = [x for x in mean_acc if x[0]['learning_rate_init'] == 0.001]
+    mean_acc_2 = [x for x in mean_acc if x[0]['learning_rate_init'] == 0.003]
+    mean_acc_3 = [x for x in mean_acc if x[0]['learning_rate_init'] == 0.01]
+    mean_acc_4 = [x for x in mean_acc if x[0]['learning_rate_init'] == 0.03]
 
-    loss_1 = [x for x in loss if x[0]['alpha'] == 0.0001]
+    loss_1 = [x for x in loss if x[0]['learning_rate_init'] == 0.001]
+    loss_2 = [x for x in loss if x[0]['learning_rate_init'] == 0.003]
+    loss_3 = [x for x in loss if x[0]['learning_rate_init'] == 0.01]
+    loss_4 = [x for x in loss if x[0]['learning_rate_init'] == 0.03]
 
-    create_graph(mean_f1_alpha_1, mean_acc_alpha_1, loss_1)
-    create_graph(mean_f1_alpha_2, mean_acc_alpha_2, loss_1)
-    create_graph(mean_f1_alpha_3, mean_acc_alpha_3, loss_1)
+    create_graph(mean_f1_1, mean_acc_1, loss_1)
+    create_graph(mean_f1_2, mean_acc_2, loss_2)
+    create_graph(mean_f1_3, mean_acc_3, loss_3)
+    create_graph(mean_f1_4, mean_acc_4, loss_4)
 
 
 def create_graph(dict_f1, dict_acc, dict_loss):
@@ -92,14 +102,14 @@ def create_graph(dict_f1, dict_acc, dict_loss):
     create_barh(dict_acc, text_offset=-width/2.0, color='r', label='accuracy', va='bottom')
     create_barh(dict_loss, offset=width, text_offset=width/2.0, color='g', label='log_loss', va='bottom')
 
-    plt.title('With alpha={}'.format(dict_f1[0][0]['alpha']))
+    plt.title('With learning rate={}'.format(dict_f1[0][0]['learning_rate_init']))
     plt.legend()
     plt.show()
 
 
 def create_barh(dict_, color, label, text_offset, offset=0, va='center'):
     plt.barh([x+offset for x in range(0,len(dict_))], [abs(x[1]) for x in dict_], 
-                    tick_label=['learn_rate={}&{}'.format(x[0]['learning_rate_init'],x[0]['solver']) for x in dict_], color=color, height=0.2, label=label)
+                    tick_label=['alpha={}'.format(x[0]['alpha']) for x in dict_], color=color, height=0.2, label=label)
     for i,v in enumerate([x[1] for x in dict_]):
         plt.text(abs(v),i+text_offset, " "+str('{:.4f}'.format(abs(v))), va=va)
 

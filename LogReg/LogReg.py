@@ -30,7 +30,7 @@ def main():
 
     #create the classifier and fit to the data
     print('Creating the model...')
-    clf = LogisticRegression(verbose=True, max_iter=2500, C=0.01)
+    clf = LogisticRegression(verbose=True, max_iter=5000, C=0.3)
     clf.fit(Xtrain, ytrain)
     print('Done')
     result = clf.score(Xtest, ytest)

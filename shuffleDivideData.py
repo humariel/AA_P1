@@ -9,8 +9,7 @@ CURRENT_DIR = os.getcwd()
 PROCESSED_TRAIN_DIR = CURRENT_DIR + '/dataset/train'
 PROCESSED_TEST_DIR = CURRENT_DIR + '/dataset/test'
 DATASET_DIR = CURRENT_DIR + '/dataset'
-TRAIN_PERCENTAGE = 0.6
-VAL_PERCENTAGE = 0.2
+TRAIN_PERCENTAGE = 0.8
 TEST_PERCENTAGE = 0.2
 
 def getTrainingSet():
@@ -46,22 +45,17 @@ if __name__ == "__main__":
     print('Collecting training set. This may take a while ...')
     X, y = getTrainingSet()
     print('Done. Collected {} training examples'.format(len(X)))
-    X,y = shuffleDataset(np.asarray(X),np.asarray(y))
 
     print('Shuffling dataset...')
+    shuffled_X,shuffled_y = shuffleDataset(np.asarray(X),np.asarray(y))
+
     trainSize = int(TRAIN_PERCENTAGE * len(X))
-    valSize = int(VAL_PERCENTAGE * len(X))
-    splitter = [trainSize, trainSize+valSize]
-    shuffled_X = np.split(X,splitter)
-    shuffled_y = np.split(y,splitter)
 
-    Xtrain = shuffled_X[0]
-    Xval = shuffled_X[1]
-    Xtest = shuffled_X[2]
+    Xtrain = shuffled_X[0:trainSize]
+    Xtest = shuffled_X[trainSize:len(X)]
 
-    ytrain = shuffled_y[0]
-    yval = shuffled_y[1]
-    ytest = shuffled_y[2]
+    ytrain = shuffled_y[0:trainSize]
+    ytest = shuffled_y[trainSize:len(y)]
     print('Done')
 
     print('Scaling training set')
@@ -69,11 +63,7 @@ if __name__ == "__main__":
     scaler.fit(Xtrain)
     Xtrain = scaler.transform(Xtrain)
     print('Done')
-    print('Scaling vailidation set')
-    scaler = StandardScaler()
-    scaler.fit(Xval)
-    Xval = scaler.transform(Xval)
-    print('Done')
+
     print('Scaling test set')
     scaler = StandardScaler()
     scaler.fit(Xtest)
@@ -83,10 +73,8 @@ if __name__ == "__main__":
     #save all the sets
     print('Saving all the sets')
     np.save(DATASET_DIR + '/Xtrain', Xtrain)
-    np.save(DATASET_DIR + '/Xval', Xval)
     np.save(DATASET_DIR + '/Xtest', Xtest)
 
     np.save(DATASET_DIR + '/ytrain', ytrain)
-    np.save(DATASET_DIR + '/yval', yval)
     np.save(DATASET_DIR + '/ytest', ytest)
 

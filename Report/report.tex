@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{csquotes}
+\usepackage{biblatex} 
+\usepackage{hyperref} 
+\usepackage{acronym}
+
+\bibliography{references}
+
+\begin{document}
+
+\def\title_{Classifying German Traffic Signs}
+\def\subtitle_{Project 1 Report}
+\def\authors_{Gabriel Silva (85129)  \& Gonçalo Vítor (85119)}
+\def\uni_{Universidade de Aveiro}
+\def\department_{Departamento de Eletrónica, Telecomunicações e Informática}
+\def\course_{Course: Machine Learning}
+\def\professor_{Professor: Pétia Georgieva}
+\def\logo{ua.pdf}
+
+\pagenumbering{roman}
+
+%%COVER%%
+\begin{titlepage}
+\begin{center}
+    {\Huge \title_}\\
+    {\vspace{5mm}}
+    {\Large \subtitle_}\\
+    {\vspace{10mm}}
+    {\large \authors_}\\
+    {\vspace{20mm}}
+
+    \begin{figure}[h]
+        \center
+        \includegraphics{\logo}
+    \end{figure}
+    \vspace{5mm}
+    {\Large \uni_}\\
+    {\vspace{5mm}}
+    {\large \department_}\\
+    \vspace{20mm}
+    {\Large \course_}\\
+    {\vspace{5mm}}
+    {\large \professor_}\\
+
+\end{center}
+\end{titlepage}
+
+\begin{abstract}
+    \par
+        This project makes use of the \ac{gtsrb}, a dataset composed of images of traffic signs (one per image) in several illumination, 
+        weather, obstruction, distance and rotation conditions. In this project we use the \ac{gtsrb} dataset to train several classification 
+        models and study how each one performs.
+    \par
+        This report will start by describing the dataset and the work that was done to prepare it for further use, will continue, then, talking 
+        about the models we used and how we trained and optimized them and will finish with our conclusions.
+
+\end{abstract}
+\clearpage
+
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+
+
+\section{Data}
+\label{section.data}
+
+\subsection{Data Description}
+\label{subsection.data_description}
+Here goes a bit about the data we used. Include some examples of images as data visualization.\cite{kaggle_dataset}
+\subsection{Data Preprocessing}
+\label{subsection.data_preprocessing}
+Talk about the data preprocessing, as well as the shuffling of data.
+
+\clearpage
+\section{Models}
+\label{section.models}
+
+\subsection{Used Models}
+\label{subsection.used_models}
+Talk about the 3 used models. LogisiticRegression, SVC and MLPClassifier. Mention the skleanr documentation pages.
+\subsection{Model Training and Hyper-Paramenter tunning}
+\label{subsection.model_training}
+Talk about the training and optimization of models.
+\subsection{Training results}
+\label{subsection.training_results}
+Show plots and information on training results for each model. Compare the results
+
+\clearpage
+\section{Conclusions}
+\label{section.conclusions}
+Conclusions here
+
+
+\clearpage
+\section*{Acronyms}
+    \begin{acronym}
+        \acro{gtsrb}[GTSRB]{German Traffic Sign Recognition Benchmark}
+    \end{acronym}
+
+\printbibliography
+
+\end{document}

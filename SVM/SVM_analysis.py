@@ -32,8 +32,7 @@ def run_optimizer():
     ytest = ytest[0:int(len(ytest)/10)]
 
     params = {
-        'gamma': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3],
-        'C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
+        'C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 9999]   
     }
 
     scores = {
@@ -72,42 +71,25 @@ def plot_data():
 
     loss = list(zip(params, results['mean_test_loss']))
 
-    mean_f1_C_1 = [x for x in mean_f1 if x[0]['C'] == 0.001]
-    mean_f1_C_2 = [x for x in mean_f1 if x[0]['C'] == 0.003]
-    mean_f1_C_3 = [x for x in mean_f1 if x[0]['C'] == 0.01]
-    mean_f1_C_4 = [x for x in mean_f1 if x[0]['C'] == 0.03]
-    mean_f1_C_5 = [x for x in mean_f1 if x[0]['C'] == 0.1]
-    mean_f1_C_6 = [x for x in mean_f1 if x[0]['C'] == 0.3]
-
-    mean_acc_C_1 = [x for x in mean_acc if x[0]['C'] == 0.001]
-    mean_acc_C_2 = [x for x in mean_acc if x[0]['C'] == 0.003]
-    mean_acc_C_3 = [x for x in mean_acc if x[0]['C'] == 0.01]
-    mean_acc_C_4 = [x for x in mean_acc if x[0]['C'] == 0.03]
-    mean_acc_C_5 = [x for x in mean_acc if x[0]['C'] == 0.1]
-    mean_acc_C_6 = [x for x in mean_acc if x[0]['C'] == 0.3]
-
-    create_graph(mean_f1_C_1, mean_acc_C_1)
-    create_graph(mean_f1_C_2, mean_acc_C_2)
-    create_graph(mean_f1_C_3, mean_acc_C_3)
-    create_graph(mean_f1_C_1, mean_acc_C_4)
-    create_graph(mean_f1_C_2, mean_acc_C_5)
-    create_graph(mean_f1_C_3, mean_acc_C_6)
+    create_graph(mean_f1, mean_acc, loss)
 
 
-def create_graph(dict_f1, dict_acc):
+def create_graph(dict_f1, dict_acc, dict_loss):
     width = 0.2
 
-    create_barh(dict_f1, offset=-width, text_offset=-width, color='b', label='f1_score', va='center')
-    create_barh(dict_acc, text_offset=-width/2.0, color='r', label='accuracy', va='bottom')
+    create_barh(dict_f1, offset=-width, text_offset=-width, color='b', label='f1_score(in %)', va='center')
+    create_barh(dict_acc, text_offset=-width/2.0, color='r', label='accuracy(in %)', va='bottom')
+    create_barh(dict_loss, offset=width, text_offset=width/2.0, color='g', label='log_loss', va='bottom')
 
-    plt.title('With C={}'.format(dict_f1[0][0]['C']))
+    plt.title('SVC analysis')
+    plt.xlabel('%(f1_score and accuracy)/measured loss(log_loss)')
     plt.legend()
     plt.show()
 
 
 def create_barh(dict_, color, label, text_offset, offset=0, va='center'):
     plt.barh([x+offset for x in range(0,len(dict_))], [abs(x[1]) for x in dict_], 
-                    tick_label=['gamma={}'.format(x[0]['gamma']) for x in dict_], color=color, height=0.2, label=label)
+                    tick_label=['C={}'.format(x[0]['C']) for x in dict_], color=color, height=0.2, label=label)
     for i,v in enumerate([x[1] for x in dict_]):
         plt.text(abs(v),i+text_offset, " "+str('{:.4f}'.format(abs(v))), va=va)
 

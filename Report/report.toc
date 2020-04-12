@@ -1,0 +1,18 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {english}{}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1}Data}{1}{section.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.1}Data Description}{1}{subsection.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2}Data Preprocessing}{1}{subsection.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2}Models}{2}{section.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1}Used Models}{2}{subsection.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2}Model Training and Hyper-Paramenter tunning}{2}{subsection.2.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.3}Training results}{2}{subsection.2.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3}Conclusions}{3}{section.3}
