@@ -58,8 +58,10 @@
         weather, obstruction, distance and rotation conditions. In this project we use the \ac{gtsrb}\cite{kaggle_dataset} dataset to train several 
         classification models and study how each one performs.
     \par
-        This report will start by describing the dataset and the work that was done to prepare it for further use, will continue, then, talking 
+        This report will start by describing the dataset and the work that was done to prepare it for further use and will continue, then, talking 
         about the models we used and how we trained and optimized them.
+    \par 
+        The work hereby reported was developed with equal efforts by both authors.
 
 \end{abstract}
 \clearpage
@@ -81,8 +83,8 @@
     \par 
         The dataset provides three main folders: train, test and meta folder. The meta folder contains 43 images, one per each traffic sign 
         that appears in the training and test folders. The test folder is not meant to be used as a test set when training a model. The reason 
-        for it is that the images in this test folder are not labeled. This folder will still be used in a simple application demo, that shows 
-        a model working and making predictions on the images of this test folder. The train folder is organized in 43 sub-folders. Those 43 folders' 
+        for it is that the images in this test folder are not labeled. The images in this folder are still used in a simple application demo, that shows 
+        a model working and making predictions. The train folder is organized in 43 sub-folders. Those 43 folders' 
         names are the number that corresponds to the label of the images inside, and so we know the label of a given image by the name of the folder it 
         resides in.
 
@@ -91,24 +93,27 @@
     \par
         The biggest problem faced with the dataset is that the images are of various sizes. By using each pixel of an image as a feature for our 
         models, the fact that the images have different sizes, and therefore a different amount of features, is a problem that must be fixed. The 
-        image resizing thecnique used not only resizes the images to a common size, but it also pads them with grey stripes, if necessary. We reused a 
+        image resizing thecnique used resizes the images to a common size, padding them with grey stripes, if necessary. We reused a 
         solution made by a kaggle user named gauss256\cite{data_preprocessing}. In the previous reference (\cite{data_preprocessing}) we can see a 
-        notebook where the components to an image preprocessing algorithm are presented. Besides image resizing it also presents solution for image 
+        notebook where the components to an image preprocessing algorithm are presented. Besides image resizing it also presents a solution for image 
         normalization, but this problem was faced in a different way in this project.
     \par
         The normalization is done with a tool from the sklearn library, the StandardScaler. The StandardScaler performs normalization 
-        by removing the mean and scaling the the data to unit varience\cite{standardScaler}. Any given sample x will be transformed according to  
+        by removing the mean and scaling the the data to unit varience\cite{standardScaler}. Any given sample \textit{x} will be transformed according to  
         the following expression: \[z = (x-u)/s\] where \textit{u} is the mean and \textit{s} is the standard deviation of the training examples.
     \par
         Finally, the amount of data also proved to be a problem. Training models on this much data took too long on ordinary machines and so we decided 
         to work only on 10\% of it. To do so, we first collected and processed all the images, and then shuffled them, allowing us to use 10\% of the dataset, 
-        in a well divided manor, by simple using the first tenth of the samples of the shuffled dataset.
+        in a well divided manor, by simple using the first tenth of the samples of the shuffled dataset. The reason why shufflig is necessary is because 
+        the simplest way to retrieve the dataset is by traversing all folder and process all images of each folder. By doing so, the images of a particular 
+        class (and also, of a particular folder) will be added to our data structures together, which makes it so that just using the first tenth of the dataset 
+        will also mean having images of just a few classes, which is a total missrepresentation of the dataset.
 
-    \begin{figure}[h]
+    \begin{figure}[htb]
         \caption{A sample of our data, post-processing}
         \adjustimage{scale=0.25,center}{images/data_samples.png}
     \end{figure}
-    \begin{figure}[h]
+    \begin{figure}[htb]
         \caption{The 43 different classes}
         \adjustimage{scale=0.25,center}{images/classes.png}
     \end{figure}
@@ -125,47 +130,50 @@ In this projecct, we used 3 different classification algorithms: Logistic Regres
     \par 
         The sklearn LogisticRegression\cite{logisticRegression} class implements a regularized version of a logistic regression that 
         provides several solvers(optimization functions). In this project we used the 'lbfgs' solver. One thing to note is that 
-        this is a regularized version of a logistic regression, which has a parameter \textit{C} that is the inverse of the 
+        this is a regularized version of a logistic regression, which uses a parameter \textit{C} that is the inverse of the 
         regularization strength, meaning the smaller it is, the stronger the regularization is. This means that it's not actually 
         possible to have a 0 regularization factor, but, as \textit{C} tends to infinity the regularization factor tends to 0, and 
-        so very high value of \textit{C} will provide very small regularization. This is how we trained our model to not have regularization. 
-        In our case we used \textit{C} = 9999. This class also allows the use of different loss functions. We made use of the L2\cite{loss_functions} one.
+        so, a very high value of \textit{C} will provide very small regularization. This is how we trained our model to not have regularization. 
+        In our case we used \textit{C} = 9999\cite{loss_functions}. This class also allows the use of different loss functions. We made use of 
+        the L2\cite{loss_functions} one.
 
 \subsubsection{SVC}
 \label{subsubsection.svc}
     \par 
-        The sklearn SVC\cite{SVC} class implements a Support-Vector Classifier.It has a similar parameter \textit{C} as the Logistic Regression in 
+        The sklearn SVC\cite{SVC} class implements a Support-Vector Classifier. It has a similar parameter \textit{C} as the Logistic Regression in 
         \autoref{subsubsection.logreg} that works the same way. We used the same strategy to train a non-regularized version of the model. This model has 
         the particularity that \textit{'the fit time scales at least quadratically with the number of samples and may be impractical beyond tens of thousands 
         of samples.'}\cite{SVC}. The sklearn documentation recomends using the LinearSVC\cite{LinearSVC} for larger than around ten thousand sample datasets, 
-        but when doing so, we did not notice any meaningful time performance improvements, so this was one of the factors that lead us to decide to use a much 
+        but when doing so, we did not notice any meaningful time performance improvements. This was one of the factors that lead us to decide to use a much 
         smaller fraction of the dataset. We decided to use a linear kernel, since it is less time consuming\cite{kcheck}.
 
 \subsubsection{MLPClassifier}
 \label{subsubsection.mlpc}
     \par 
-        The MLPClassifier\cite{MLPClassifier} class is a multi-layer Perceptron\cite{perceptron} classifier. Much like the LogisticRegression classifier, it allows the use of several 
+        The MLPClassifier\cite{MLPClassifier} class is a multi-layer perceptron classifier. Much like the LogisticRegression classifier, it allows the use of several 
         solvers, including 'lbfgs' and \ac{sgd}. We used \ac{sgd} simply because it was the one we were more familiar with. It gives us the possibility 
-        of using various activation function, like the logistic sigmoid functions, the hyperbolic tangent function or the rectified linear unit function. Once 
+        of using various activation functions, like the logistic sigmoid functions, the hyperbolic tangent function or the rectified linear unit function. Once 
         more, we used the logisitc function since it was the one we knew best. It also let's us change the regularization parameter alpha and the learning rate, 
         which we varied in our optimization tests. As to the amount and size of hidden layers used, we used only one hidden layer\cite{nn_faq} with 100 neurons, 
-        which is around 1/30 of the amount of samples we trained the model on. We also noticed that when using a larger hidden layer, the training time increased, 
-        and so we decided to settle with only 100 neurons. We'll discuss this with more detail on \autoref{subsection.model_tunning}. Finally, we also decided 
-        to try out some parameters that were unknown to us: momentum and nesterov's momentum. Momentum speeds up gradient descent by trying to make it 
+        which is a vlaue between the size of the input and output layers. We also noticed that when using a larger hidden layer, the training time increased, 
+        and so we decided to settle with only 100 neurons. Finally, we also decided 
+        to try out some parameters that were unknown to us until now: momentum and nesterov's momentum. Momentum speeds up gradient descent by trying to make it 
         take a more direct route towards the local optimum.
 
 \subsection{Model Training and Hyper-Parameter tunning}
 \label{subsection.model_tunning}
 To optimize the models we used the GridSearchCV\cite{grid_search} class from sklearn, which uses an estimator(model) and a dictionary of parameters and 
-performs an exhaustive search over all the possible parameter combinations and scores the model using cross-validated optimized parameters. The GridSearchCV 
-can also use several scoring metrics, including the accuracy, f1 score and logistic loss that were all used by us for all models. Many more scoring metrics 
-are available\cite{metrics}. We also used 3-fold cross-validation. We used a small value because the more folds the longer it takes train each model.
+performs an exhaustive search over all the possible parameter combinations and scores the models using cross-validated optimized parameters. The GridSearchCV 
+can use several scoring metrics, including the accuracy, f1 score and logistic loss that were all used by us. Many more scoring metrics 
+are available\cite{metrics}. We also used the k-fold cross-validation method with 3 folds\cite{cv}. We used a small value because the more folds the longer it 
+takes train each model.
 \subsubsection{LogisticRegression}
 \label{subsubsection.logreg_tunning}
     \par 
         For our Logistic Regression model, we tested using multiple values of \textit{C} : [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 9999].
-        Both when optimizing the model and when training the final one we operated on only 10\% of the data and used the parameters mentioned in \autoref{subsubsection.logreg}.
-    \begin{figure}[!tb]
+        Both when optimizing the model and when training the final one to test on the test set we operated on only 10\% of the data and 
+        used the parameters mentioned in \autoref{subsubsection.logreg}.
+    \begin{figure}[!htb]
         \caption{Logistic Regression optimization}
         \adjustimage{scale=0.5,center}{images/log_reg_opti.png}
         \label{img_log_reg_opti}
@@ -175,10 +183,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         In the results of \autoref{img_log_reg_opti}, we see the value measured for the three scores given to the GridSearchCV for each value of 
         the regularization parameter \textit{C} of our model. We can see that most models have the same accuracy and F1 score, around the 77\% mark 
         and so we selected, as the best model, the model with the lowest logistic loss, which is the model with \textit{C} = 0.03.
-    \par 
-        When training the model outside of the GridSearchCV, we reached the following results:
     \begin{center}
-        \begin{table}
+        \begin{table}[!h]
             \caption{Logistic Regression's Scores}
             \begin{center}
             \begin{tabular}{|c |c |c |c|}
@@ -193,6 +199,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         \end{table}
     \end{center}
     \par 
+        When training the model outside of the GridSearchCV, we reached the resutls in \autoref{tab_log_reg} with our test set.
+    \par 
         The model was trained in 240 seconds (4.0 minutes).
         The model fitting function, or the model itself don't provide any loss value record through iterations, which made it so we couldn't see the 
         loss function converging, but a warning is raised whenever a model fails to converge. We made sure we gave the model enough iterations so that 
@@ -203,7 +211,7 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         \par 
         For our SVC model, we tested, again, using multiple values of \textit{C} : [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 9999].
         Both when optimizing the model and when training the final one we operated on only 10\% of the data and used the parameters mentioned in \autoref{subsubsection.svc}.
-    \begin{figure}[!tb]
+    \begin{figure}[!htb]
         \caption{SVC optimization}
         \adjustimage{scale=0.5,center}{images/svc_opti.png}
         \label{img_svc_opti}
@@ -214,10 +222,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         the regularization parameter \textit{C} of our model. We can see that both the f1 score and the accuracy peak at 70\% and the logistic losses are all 
         very similar. We selected as our best fitting model the one that keeps both the accuracy and the f1 score above 70\% and has the lowest loss, which 
         is the model with \textit{C} = 0.01.
-    \par 
-        When training the model outside of the GridSearchCV, we reached the following results:
     \begin{center}
-        \begin{table}
+        \begin{table}[!h]
         \caption{SVC's Scores}
         \begin{center}
         \begin{tabular}{|c |c |c |c|}
@@ -231,6 +237,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         \end{center}
         \end{table}
     \end{center}
+    \par 
+        When training the model outside of the GridSearchCV, we reached the results in \autoref{tab_svm} with our test set.
     \par 
         The model was trained in 54 seconds (less than 1 minute).
         Like in the Logistic Regression model we didn't have access to a loss history, and couldn't see the loss converging, but again, given the absence 
@@ -246,13 +254,15 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         The reason why we decided against these ideas was the amount of time the optimization would take. With the given possibilities for 
         alpha and the learning rate we already have 54 different models, and with 3-fold validation that gives 162 models to fit, each one 
         taking a few minutes (with the exception of the ones with the highest leaning rates, which we found to be too high). If each model 
-        were to take 3 minutes to train we are already looking at 162*3=486 minutes(over 5 hours) to finish the exhaustive search. If we add 
+        were to take 3 minutes (which is very optimistic) to train we are already looking at 162*3=486 minutes(over 5 hours) to finish the exhaustive 
+        search. If we add 
         more learning rates, in particular, smaller ones (smaller learning rates make it so that the model takes longer to converge) and also 
-        experimente more hidden layer sizes we are looking at thousands of minutes to finish the search. For this reason we only trained our 
+        experiment with more hidden layer sizes we are looking at thousands of minutes to finish the search, even with only 10\% of the dataset. 
+        For this reason we only trained our 
         MLPClassifier with a hidden layer with 100 neurons. Just like in the previous examples, both when optimizing the model and when 
         training the final one we only used 10\% of the data.
 
-    \begin{figure}[!tb]
+    \begin{figure}[!htb]
         \caption{MLPC optimization}
         \adjustimage{scale=0.33,center}{images/nn_opti.jpg}
         \label{img_nn_opti}
@@ -262,8 +272,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         In \autoref{img_nn_opti} we can see the plots for the different scores used for each learning rate and alpha used. In them we notice that 
         the smaller learning rates are the ones that give us the best results. The two highest learning rates are not shown, but their results 
         were the worst. When observing the two lower learning rates' results (the ones on the up side) we notice that the accuracy was higher with 
-        the smaller learning rate (0.001 with alpha 0.01) but the f1 score was the highest and loss the lowest with the learning rate at 0.003 
-        and alpha 0.03. This final one is the model we selected as the best one.
+        the smaller learning rate (0.001 with alpha 0.01) but the f1 score was the highest and (perhaps more importantly)the loss the lowest with the 
+        learning rate at 0.003 and alpha 0.03. This final one is the model we selected as the best one.
     \par 
         Unlike the previous models, the MLPClassifier does provide a loss history. \autoref{img_nn_convergence} shows a plot of the loss convergence 
         with and without momentum, using the parameters we found as best before. In it we can notice the clear and very meaningful impact of momentum. When using 
@@ -273,10 +283,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         \adjustimage{scale=0.5,center}{images/nn_convergence.png}
         \label{img_nn_convergence}
     \end{figure}
-    \par
-        When training the model outside of the GridSearchCV, we reached the following results:
     \begin{center}
-        \begin{table}
+        \begin{table}[!h]
         \caption{MPLC's Scores}
         \begin{center}
         \begin{tabular}{|c |c |c |c|}
@@ -290,6 +298,8 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
         \end{center}
     \end{table}
     \end{center}
+    \par
+        When training the model outside of the GridSearchCV, we reached the results in \autoref{tab_nn} with our test set.
     \par 
         The model was trained in 432 seconds (a little over 7 minutes) using nesterov's momentum.
 
@@ -298,7 +308,7 @@ are available\cite{metrics}. We also used 3-fold cross-validation. We used a sma
 \label{section.conclusions}
 
     \begin{center}
-        \begin{table}
+        \begin{table}[!h]
         \caption{Models' Performances}
         \begin{tabular}{|c |c |c |c |c |c|}
             \hline

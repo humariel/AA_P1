@@ -2,9 +2,9 @@
 
 How to set up:
 
-1. Download the dataset here: https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign
+1. Download the dataset here: https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign and place it on this folder.
 
-2. Make sure you have the following things installed in python3 (in my case python3.7):
+2. Make sure you have the following things installed in python3:
 	1. sklearn
 	2. PIL
 	3. matplotlib
@@ -19,8 +19,9 @@ How to set up:
 	2. preprocessImages.py
 	3. shuffleDivideData.py
 
-4. Move to the NN folder:
+4. In the NN folder:
 	1. The NN.py script trains a model with the best parameters found from a small amount of possibilities.
 	2. The NN_testing.py shows the trained model making predictions.
-	3. The NN_analysis.py can (depending on input, run it with -h for help)
+	3. The NN_analysis.py can (depending on input, run with -h for help) either run the optimization process or show it's results.
+
 5. Similar steps as in 4 for the Logistic Regression and the SVM

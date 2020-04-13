@@ -32,7 +32,7 @@ def main():
 
     #create the classifier and fit to the data
     print('Creating the model...')
-    clf = SVC(C=0.01, verbose=True, kernel='linear')
+    clf = SVC(C=0.003, verbose=True, kernel='linear')
     start = time.time()
     clf.fit(Xtrain, ytrain)
     end = time.time()
