@@ -32,7 +32,7 @@ def run_optimizer():
     ytest = ytest[0:int(len(ytest)/10)]
 
     params = {
-        'hidden_layer_sizes' : [(10)],
+        'hidden_layer_sizes' : [(100)],
         'alpha' : [0, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3],
         'learning_rate_init' : [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
     }
@@ -135,6 +135,13 @@ def plot_convergence_curves():
     print('Collecting yval')
     ytest = np.load(DATASET_DIR + '/ytest.npy')
 
+    #use only 10% of data
+    Xtrain = Xtrain[0:int(len(Xtrain)/10)]
+    ytrain = ytrain[0:int(len(ytrain)/10)]
+
+    Xtest = Xtest[0:int(len(Xtest)/10)]
+    ytest = ytest[0:int(len(ytest)/10)]
+
 
     #create the classifier and fit to the data
     k = 43                  #number of classes
@@ -144,7 +151,7 @@ def plot_convergence_curves():
 
     for conf in params:
         print('Creating the model...')
-        clf = MLPClassifier(solver='sgd',activation='relu', alpha=0.003, learning_rate_init=0.01, hidden_layer_sizes=(neurons, k), max_iter=200, verbose=True, **conf)
+        clf = MLPClassifier(solver='sgd',activation='logistic', alpha=0.03, learning_rate_init=0.003, hidden_layer_sizes=(neurons), max_iter=5000, verbose=True, **conf)
         print('Fitting the model. This will take a while...')
         clf.fit(Xtrain, ytrain)
         loss_curves.append(clf.loss_curve_)
@@ -152,6 +159,9 @@ def plot_convergence_curves():
     for curve, label, conf in zip(loss_curves, labels, plot_params):
         plt.plot(curve, label=label, **conf)
 
+    plt.title('Iterations to converge with different momentum')
+    plt.ylabel('Cost')
+    plt.xlabel('Iterations')
     plt.legend()
     plt.show()
 

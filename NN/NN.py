@@ -4,7 +4,8 @@ import numpy as np
 from sklearn.neural_network import MLPClassifier
 import pickle
 import matplotlib.pyplot as plt
-from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
+import time
 
 CURRENT_DIR = os.getcwd()
 DATASET_DIR = CURRENT_DIR + '/../dataset'
@@ -31,21 +32,23 @@ def main():
 
     #create the classifier and fit to the data
     print('Creating the model...')
-    neurons = 350  #neurons in hidden layer
-    clf = MLPClassifier(solver='sgd',activation='relu', alpha=0.03, learning_rate_init=0.003, hidden_layer_sizes=(neurons), max_iter=5000, momentum=0.9, nesterovs_momentum=True, verbose=True)
+    neurons = 100  #neurons in hidden layer
+    clf = MLPClassifier(solver='sgd',activation='logistic', alpha=0.03, learning_rate_init=0.003, hidden_layer_sizes=(neurons), max_iter=5000, momentum=0.9, nesterovs_momentum=True, verbose=True)
     print('Fitting the model. This will take a while...')
+    start = time.time()
     clf.fit(Xtrain, ytrain)
+    end = time.time()
 
-    res = clf.score(Xtest,ytest)
-    print(res)
-
-    # preds = clf.predict(Xtest)
-    # f1 = f1_score(ytest, preds, average='weighted')
-    # precision = precision_score(ytest, preds, average='weighted')
-    # recall = recall_score(ytest, preds, average='weighted')
-    # print(f1)
-    # print(recall)
-    # print(precision)
+    preds = clf.predict(Xtest)
+    acc = accuracy_score(ytest, preds)
+    f1 = f1_score(ytest, preds, average='weighted')
+    precision = precision_score(ytest, preds, average='weighted')
+    recall = recall_score(ytest, preds, average='weighted')
+    print('Accuracy:' + str(acc))
+    print('F1:'+str(f1))
+    print('Recall:'+str(recall))
+    print('Precision:'+str(precision))
+    print('Took {} seconds'.format(str(end-start)))
 
     plt.plot(clf.loss_curve_)
     plt.show()

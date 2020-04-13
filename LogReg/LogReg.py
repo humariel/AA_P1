@@ -4,6 +4,8 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 import pickle
 import matplotlib.pyplot as plt
+from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, log_loss
+import time
 
 CURRENT_DIR = os.getcwd()
 DATASET_DIR = CURRENT_DIR + '/../dataset'
@@ -30,11 +32,23 @@ def main():
 
     #create the classifier and fit to the data
     print('Creating the model...')
-    clf = LogisticRegression(verbose=True, max_iter=5000, C=0.3)
+    clf = LogisticRegression(verbose=True, max_iter=5000, C=0.03)
+    start = time.time()
     clf.fit(Xtrain, ytrain)
+    end = time.time()
     print('Done')
-    result = clf.score(Xtest, ytest)
-    print(result)
+
+    preds = clf.predict(Xtest)
+    acc = accuracy_score(ytest, preds)
+    f1 = f1_score(ytest, preds, average='weighted')
+    precision = precision_score(ytest, preds, average='weighted')
+    recall = recall_score(ytest, preds, average='weighted')
+    print('Accuracy:' + str(acc))
+    print('F1:'+str(f1))
+    print('Recall:'+str(recall))
+    print('Precision:'+str(precision))
+    print('Took {} seconds'.format(str(end-start)))
+
     #save the classifier
     filename = 'model'
     pickle.dump(clf, open(filename, 'wb'))

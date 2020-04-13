@@ -1,31 +1,7 @@
+#adapted from
 #https://www.kaggle.com/gauss256/preprocess-images
+#credits to gauss256
 
-"""
-Preprocess image data for Dogs vs. Cats competition
-https://www.kaggle.com/gauss256
-
-DESCRIPTION
-
-Most solutions for this competition will need to deal with the fact that the
-training and test images are of varying sizes and aspect ratios, and were taken
-under a variety of lighting conditions. It is typical in cases like this to
-preprocess the images to make them more uniform.
-
-By default this script will normalize the image luminance and resize to a
-square image of side length 224. The resizing preserves the aspect ratio and
-adds gray bars as necessary to make them square. The resulting images are
-stored in a folder named data224.
-
-The location of the input and output files, and the size of the images, can be
-controlled through the processing parameters below.
-
-INSTALLATION
-
-This script has been tested on Ubuntu 14.04 using the Anaconda distribution for
-Python 3.5. The only additional requirement is for the pillow library for image
-manipulation which can be installed via:
-    conda install pillow
-"""
 import glob
 from multiprocessing import Process
 import os

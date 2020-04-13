@@ -43,7 +43,7 @@ def run_optimizer():
 
     model = LogisticRegression(max_iter=5000)
 
-    optimizer = GridSearchCV(estimator=model, param_grid=params, cv=3, verbose=10, scoring=scores, refit='acc')
+    optimizer = GridSearchCV(estimator=model, param_grid=params, cv=3, verbose=10, scoring=scores, refit='f1_')
     print('Fitting optimizer...')
     optimizer.fit(Xtrain, ytrain)
     
