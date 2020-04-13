@@ -75,8 +75,9 @@ def main():
     for root, dirs, files in os.walk(TEST_DIR):
         for name in files:
             path = os.path.join(root, name)
-            output_dir = PROCESSED_TEST_DIR + '/'
-            new_image = prep_image(path,output_dir)
+            if path.split('.')[-1] != 'csv':
+                output_dir = PROCESSED_TEST_DIR + '/'
+                new_image = prep_image(path,output_dir)
 
 
 if __name__ == "__main__":
